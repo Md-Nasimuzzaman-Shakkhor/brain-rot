@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Tic-Tac-Toe</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff007c;
+            --bg-dark: #0d0e15;
+            --panel-bg: #181a26;
+        }
+
+        body {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+        }
+
+        #status {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            color: #aaa;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 12px;
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cell:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Catchy Neon Colors for Players */
+        .cell.X {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+            border-color: var(--neon-cyan);
+        }
+
+        .cell.O {
+            color: var(--neon-magenta);
+            text-shadow: 0 0 10px rgba(255, 0, 124, 0.5), 0 0 20px rgba(255, 0, 124, 0.3);
+            border-color: var(--neon-magenta);
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+            background: transparent;
+            border: 2px solid #ffffff;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #ffffff;
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tic Tac Toe</h1>
+    <div id="status">PLAYER <span style="color: var(--neon-cyan); font-weight: bold;">X</span> TURN</div>
+    
+    <div class="board" id="board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+    </div>
+
+    <button onclick="resetGame()">Restart Match</button>
+
+    <script>
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let active = true;
+        const statusText = document.getElementById("status");
+
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        document.getElementById("board").addEventListener("click", (e) => {
+            const cell = e.target;
+            const index = cell.getAttribute("data-index");
+
+            if (!cell.classList.contains("cell") || board[index] !== "" || !active) return;
+
+            board[index] = currentPlayer;
+            cell.textContent = currentPlayer;
+            cell.classList.add(currentPlayer);
+
+            if (checkWin()) {
+                const color = currentPlayer === 'X' ? 'var(--neon-cyan)' : 'var(--neon-magenta)';
+                statusText.innerHTML = `🎉 PLAYER <span style="color: ${color}; font-weight: bold;">${currentPlayer}</span> WINS!`;
+                active = false;
+                return;
+            }
+
+            if (!board.includes("")) {
+                statusText.innerHTML = "IT'S A DRAW! 👔";
+                active = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            const nextColor = currentPlayer === 'X' ? 'var(--neon-cyan)' : 'var(--neon-magenta)';
+            statusText.innerHTML = `PLAYER <span style="color: ${nextColor}; font-weight: bold;">${currentPlayer}</span> TURN`;
+        });
+
+        function checkWin() {
+            return winPatterns.some(pattern => {
+                return pattern.every(index => board[index] === currentPlayer);
+            });
+        }
+
+        function resetGame() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            currentPlayer = "X";
+            active = true;
+            statusText.innerHTML = `PLAYER <span style="color: var(--neon-cyan); font-weight: bold;">X</span> TURN`;
+            document.querySelectorAll(".cell").forEach(cell => {
+                cell.textContent = "";
+                cell.className = "cell";
+            });
+        }
+    </script>
+</body>
+</html>
