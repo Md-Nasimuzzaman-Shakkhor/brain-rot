@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Memory Match</title>
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --bg-dark: #0d0e15;
+            --panel-bg: #181a26;
+        }
+
+        body {
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        #status {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #aaa;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            grid-gap: 10px;
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .card {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .card.hidden {
+            background: #25283d;
+            color: transparent;
+        }
+
+        .card.matched {
+            background: rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-blue);
+            cursor: default;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 1rem;
+            color: #ffffff;
+            background: transparent;
+            border: 2px solid #ffffff;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #ffffff;
+            color: var(--bg-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Memory Match</h1>
+    <div id="status">Flips: <span id="flip-count">0</span></div>
+
+    <div class="grid" id="grid"></div>
+
+    <button onclick="resetGame()">Reset Game</button>
+
+    <script>
+        const icons = ['🍎', '🍎', '🍌', '🍌', '🍇', '🍇', '🍓', '🍓', '🍒', '🍒', '🥑', '🥑', '🍉', '🍉', '🥝', '🥝'];
+        let chosenCards = [];
+        let chosenCardsIds = [];
+        let cardsMatched = [];
+        let flips = 0;
+
+        const grid = document.getElementById('grid');
+        const flipCountDisplay = document.getElementById('flip-count');
+
+        function shuffle(array) {
+            return array.sort(() => 0.5 - Math.random());
+        }
+
+        function createBoard() {
+            shuffle(icons);
+            grid.innerHTML = '';
+            chosenCards = [];
+            chosenCardsIds = [];
+            cardsMatched = [];
+            flips = 0;
+            flipCountDisplay.textContent = flips;
+
+            for (let i = 0; i < icons.length; i++) {
+                const card = document.createElement('div');
+                card.setAttribute('class', 'card hidden');
+                card.setAttribute('data-id', i);
+                card.textContent = icons[i];
+                card.addEventListener('click', flipCard);
+                grid.appendChild(card);
+            }
+        }
+
+        function flipCard() {
+            const cardId = this.getAttribute('data-id');
+            if (chosenCardsIds.length === 2 || chosenCardsIds.includes(cardId) || this.classList.contains('matched')) return;
+
+            this.classList.remove('hidden');
+            chosenCards.push(icons[cardId]);
+            chosenCardsIds.push(cardId);
+
+            if (chosenCards.length === 2) {
+                flips++;
+                flipCountDisplay.textContent = flips;
+                setTimeout(checkForMatch, 600);
+            }
+        }
+
+        function checkForMatch() {
+            const cards = document.querySelectorAll('.card');
+            const optionOneId = chosenCardsIds[0];
+            const optionTwoId = chosenCardsIds[1];
+
+            if (chosenCards[0] === chosenCards[1]) {
+                cards[optionOneId].classList.add('matched');
+                cards[optionTwoId].classList.add('matched');
+                cardsMatched.push(chosenCards);
+            } else {
+                cards[optionOneId].classList.add('hidden');
+                cards[optionTwoId].classList.add('hidden');
+            }
+
+            chosenCards = [];
+            chosenCardsIds = [];
+
+            if (cardsMatched.length === icons.length / 2) {
+                document.getElementById('status').innerHTML = `🎉 Finished in <b>${flips}</b> flips!`;
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('status').innerHTML = `Flips: <span id="flip-count">0</span>`;
+            createBoard();
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
