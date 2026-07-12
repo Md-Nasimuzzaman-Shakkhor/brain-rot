@@ -3,58 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classy Portal Dashboard</title>
+    <title>BRAINROT — Leisure Hub</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Simple fix to make the iframe fill the entire tab view perfectly */
-        .dashboard-frame {
-            width: 100%;
-            height: calc(100vh - 140px); /* Dynmically expands to fill available vertical space */
-            border: none;
-            background: transparent;
-            overflow-y: auto; /* Enables vertical scrolling inside the dashboard frame */
-        }
-    </style>
 </head>
-<body>
+<body class="app-shell">
 
     <!-- LEFT SIDEBAR -->
-    <div class="sidebar">
-        <div class="brand-logo">BRAIN<span>ROT</span></div>
+    <div class="sidebar" id="sidebar">
+        <div class="brand-logo"><span class="mark">BR</span>BRAIN<span>ROT</span></div>
+        <div class="brand-tag">your leisure hub</div>
         <ul class="sidebar-menu">
-            <li class="sidebar-item active">Main Hub</li>
-            <li class="sidebar-item">My Library</li>
-            <li class="sidebar-item">Favorites</li>
-            <li class="sidebar-item">Settings</li>
+            <li class="sidebar-item active" onclick="sidebarClick(this,'Main Hub')"><span class="ic">🏠</span>Main Hub</li>
+            <li class="sidebar-item" onclick="sidebarClick(this,'My Library')"><span class="ic">📚</span>My Library</li>
+            <li class="sidebar-item" onclick="sidebarClick(this,'Favorites')"><span class="ic">⭐</span>Favorites</li>
+            <li class="sidebar-item" onclick="sidebarClick(this,'Settings')"><span class="ic">⚙️</span>Settings</li>
         </ul>
+        <div class="sidebar-footer"><span class="pulse"></span>All systems live</div>
     </div>
 
     <!-- MAIN CONTAINER -->
     <div class="main-container">
         <nav class="sub-top-bar">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
             <ul class="nav-tabs">
-                <li class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</li>
-                <li class="nav-tab" onclick="switchTab('games')">Games</li>
-                <li class="nav-tab" onclick="switchTab('about')">About</li>
-                <li class="nav-tab" onclick="switchTab('shop')">Shop</li>
-                <li class="nav-tab" onclick="switchTab('news')">Newsboard</li>
+                <li class="nav-tab active" onclick="switchTab('dashboard', event)">🏡 Dashboard</li>
+                <li class="nav-tab" onclick="switchTab('games', event)">🎮 Games</li>
+                <li class="nav-tab" onclick="switchTab('about', event)">👤 About</li>
+                <li class="nav-tab" onclick="switchTab('shop', event)">🛍️ Shop</li>
+                <li class="nav-tab" onclick="switchTab('news', event)">📰 Newsboard</li>
             </ul>
         </nav>
 
         <div class="content-area">
-            <!-- Dashboard Page (NOW SPLIT AND CLEAN) -->
-            <div id="page-dashboard" class="content-page active">
-                <iframe src="dashboard.html" class="dashboard-frame"></iframe>
+            <!-- Dashboard Page -->
+            <div id="page-dashboard" class="content-page fill active">
+                <iframe id="dashboardFrame" src="dashboard.html" class="dashboard-frame"></iframe>
             </div>
 
             <!-- Games Page -->
             <div id="page-games" class="content-page">
-                <h2>All Games</h2>
+                <div class="page-title"><h2>All Games</h2><span class="sub">pick your poison</span></div>
                 <div class="games-grid">
-                    
+
                     <!-- To add a new game, just point the path to its HTML file -->
-                    <div class="game-card" onclick="openGame('games/snake/snake.html')">
-                        <div class="game-thumbnail">🐍</div>
+                    <div class="game-card" onclick="openGame('games/snake/snake.html','Retro Snake')">
+                        <div class="game-thumbnail"><span>🐍</span></div>
+                        <div class="play-overlay">▶ Play</div>
                         <div class="game-info">
                             <span class="game-tag">Classic</span>
                             <div class="game-title">Retro Snake</div>
@@ -62,8 +56,9 @@
                     </div>
 
                     <!-- Neon Tic-Tac-Toe Game Card -->
-                    <div class="game-card" onclick="openGame('games/tictactoe/index.html')">
-                        <div class="game-thumbnail">❌⭕</div>
+                    <div class="game-card" onclick="openGame('games/tictactoe/index.html','Neon Tic-Tac-Toe')">
+                        <div class="game-thumbnail"><span>❌⭕</span></div>
+                        <div class="play-overlay">▶ Play</div>
                         <div class="game-info">
                             <span class="game-tag">2 Player</span>
                             <div class="game-title">Neon Tic-Tac-Toe</div>
@@ -71,8 +66,9 @@
                     </div>
 
                     <!-- Cyber Memory Match Game Card -->
-                    <div class="game-card" onclick="openGame('games/memory/index.html')">
-                        <div class="game-thumbnail">🧠</div>
+                    <div class="game-card" onclick="openGame('games/memory/index.html','Memory Match')">
+                        <div class="game-thumbnail"><span>🧠</span></div>
+                        <div class="play-overlay">▶ Play</div>
                         <div class="game-info">
                             <span class="game-tag">Puzzle</span>
                             <div class="game-title">Memory Match</div>
@@ -80,8 +76,9 @@
                     </div>
 
                     <!-- Classic Ludo Game Card -->
-                    <div class="game-card" onclick="openGame('games/ludo/index.html')">
-                        <div class="game-thumbnail">🎲</div>
+                    <div class="game-card" onclick="openGame('games/ludo/index.html','Classic Ludo')">
+                        <div class="game-thumbnail"><span>🎲</span></div>
+                        <div class="play-overlay">▶ Play</div>
                         <div class="game-info">
                             <span class="game-tag">2-4 Players</span>
                             <div class="game-title">Classic Ludo</div>
@@ -91,20 +88,47 @@
                 </div>
             </div>
 
-            <div id="page-about" class="content-page"><h2>About Us</h2></div>
-            <div id="page-shop" class="content-page"><h2>Item Shop</h2></div>
-            <div id="page-news" class="content-page"><h2>Newsboard</h2></div>
+            <div id="page-about" class="content-page">
+                <div class="page-title"><h2>About Us</h2><span class="sub">the person behind the chaos</span></div>
+                <div class="empty-state">
+                    <div class="emoji">👤</div>
+                    <h3>Bio coming soon</h3>
+                    <p>This page is under construction — swap this block out for your story, socials, and whatever else you want people to know.</p>
+                </div>
+            </div>
+
+            <div id="page-shop" class="content-page">
+                <div class="page-title"><h2>Item Shop</h2><span class="sub">nothing to buy, yet</span></div>
+                <div class="empty-state">
+                    <div class="emoji">🛍️</div>
+                    <h3>Shop is empty</h3>
+                    <p>Stock it with merch, unlockables, or fake currency for the memes — your call.</p>
+                </div>
+            </div>
+
+            <div id="page-news" class="content-page">
+                <div class="page-title"><h2>Newsboard</h2><span class="sub">nothing new... yet</span></div>
+                <div class="empty-state">
+                    <div class="emoji">📰</div>
+                    <h3>No news yet</h3>
+                    <p>Post updates, patch notes, or announcements here as the site grows.</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- GAME MODAL -->
     <div id="gameModal" class="game-modal">
         <div class="modal-header">
-            <button class="close-btn" onclick="closeGame()">Close Game</button>
+            <span class="modal-title" id="modalTitle">Now Playing</span>
+            <button class="close-btn" onclick="closeGame()">✕ Close</button>
         </div>
         <!-- This clean viewport houses whatever game is opened -->
         <iframe id="gameFrame" class="game-frame" frameborder="0"></iframe>
     </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
 
     <script src="app.js"></script>
 </body>
