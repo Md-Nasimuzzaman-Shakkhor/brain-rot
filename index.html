@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classy Portal Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand-logo">SIGNATURE<span>HUB</span></div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item active">Main Hub</li>
+            <li class="sidebar-item">My Library</li>
+            <li class="sidebar-item">Favorites</li>
+            <li class="sidebar-item">Settings</li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        <nav class="sub-top-bar">
+            <ul class="nav-tabs">
+                <li class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</li>
+                <li class="nav-tab" onclick="switchTab('games')">Games</li>
+                <li class="nav-tab" onclick="switchTab('about')">About</li>
+                <li class="nav-tab" onclick="switchTab('shop')">Shop</li>
+                <li class="nav-tab" onclick="switchTab('news')">Newsboard</li>
+            </ul>
+        </nav>
+
+        <div class="content-area">
+            <!-- Dashboard Page -->
+            <div id="page-dashboard" class="content-page active">
+                <h2>Welcome back, Player</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Select the "Games" tab above.</p>
+            </div>
+
+            <!-- Games Page -->
+            <div id="page-games" class="content-page">
+                <h2>All Games</h2>
+                <div class="games-grid">
+                    
+                    <!-- To add a new game, just point the path to its HTML file -->
+                    <div class="game-card" onclick="openGame('games/snake/snake.html')">
+                        <div class="game-thumbnail">🐍</div>
+                        <div class="game-info">
+                            <span class="game-tag">Classic</span>
+                            <div class="game-title">Retro Snake</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="page-about" class="content-page"><h2>About Us</h2></div>
+            <div id="page-shop" class="content-page"><h2>Item Shop</h2></div>
+            <div id="page-news" class="content-page"><h2>Newsboard</h2></div>
+        </div>
+    </div>
+
+    <!-- GAME MODAL -->
+    <div id="gameModal" class="game-modal">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeGame()">Close Game</button>
+        </div>
+        <!-- This clean viewport houses whatever game is opened -->
+        <iframe id="gameFrame" class="game-frame" frameborder="0"></iframe>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

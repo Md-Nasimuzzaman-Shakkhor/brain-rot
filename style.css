@@ -1,0 +1,203 @@
+:root {
+    --bg-dark: #0f111a;
+    --bg-card: #171a26;
+    --accent-neon: #6366f1;
+    --accent-hover: #4f46e5;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --sidebar-width: 240px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--bg-card);
+    border-right: 1px solid #23283b;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.brand-logo {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--text-main);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-logo span { color: var(--accent-neon); }
+
+.sidebar-menu { list-style: none; }
+
+.sidebar-item {
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.sidebar-item:hover, .sidebar-item.active {
+    background-color: #23283b;
+    color: var(--text-main);
+    border-left: 4px solid var(--accent-neon);
+}
+
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sub-top-bar {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid #23283b;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    height: 100%;
+}
+
+.nav-tab {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-weight: 500;
+    position: relative;
+    padding: 0 10px;
+    height: 100%;
+    transition: color 0.3s;
+}
+
+.nav-tab:hover, .nav-tab.active { color: var(--text-main); }
+
+.nav-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--accent-neon);
+    border-radius: 3px 3px 0 0;
+}
+
+.content-area {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.content-page { display: none; }
+.content-page.active { display: block; }
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.game-card {
+    background-color: var(--bg-card);
+    border: 1px solid #23283b;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.15);
+    border-color: var(--accent-neon);
+}
+
+.game-thumbnail {
+    height: 140px;
+    background-color: #23283b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.game-info { padding: 15px; }
+.game-title { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
+.game-tag { font-size: 12px; color: var(--accent-neon); text-transform: uppercase; font-weight: bold; }
+
+/* Modal changes to support iframes */
+.game-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 17, 26, 0.95);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.game-modal.active { display: flex; }
+
+.modal-header {
+    display: flex;
+    justify-content: flex-end;
+    width: 90vw;
+    max-width: 800px;
+    margin-bottom: 15px;
+}
+
+.close-btn {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.close-btn:hover { background-color: #dc2626; }
+
+/* This is the box where the game will load */
+.game-frame {
+    width: 90vw;
+    max-width: 800px;
+    height: 600px;
+    border: 4px solid #23283b;
+    border-radius: 8px;
+    background-color: black;
+}
