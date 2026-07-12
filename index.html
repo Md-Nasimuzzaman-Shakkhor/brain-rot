@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classy Portal Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Simple fix to make the iframe fill the entire tab view perfectly */
+        .dashboard-frame {
+            width: 100%;
+            height: calc(100vh - 140px); /* Dynmically expands to fill available vertical space */
+            border: none;
+            background: transparent;
+            overflow-y: auto; /* Enables vertical scrolling inside the dashboard frame */
+        }
+    </style>
 </head>
 <body>
 
@@ -32,10 +42,9 @@
         </nav>
 
         <div class="content-area">
-            <!-- Dashboard Page -->
+            <!-- Dashboard Page (NOW SPLIT AND CLEAN) -->
             <div id="page-dashboard" class="content-page active">
-                <h2>Welcome back, Player</h2>
-                <p style="color: var(--text-muted); margin-top: 10px;">Select the "Games" tab above.</p>
+                <iframe src="dashboard.html" class="dashboard-frame"></iframe>
             </div>
 
             <!-- Games Page -->

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --st-bg: #07080e;
+    --st-panel: rgba(13, 15, 28, 0.7);
+    --st-panel-strong: rgba(255, 255, 255, 0.06);
+    --st-border: rgba(108, 92, 231, 0.15);
+    --st-border-hover: rgba(255, 77, 148, 0.4);
+    --st-pink: #ff4d94;
+    --st-violet: #8a2be2;
+    --st-cyber-blue: #00f0ff;
+    --st-amber: #ffb648;
+    --st-mint: #00ff87;
+    --text: #f4f2ff;
+    --text-muted: #7e7a9e;
+  }
+  
+  * { box-sizing: border-box; }
+  
+  body {
+    background: transparent;
+    margin: 0; padding: 0; color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+  }
+  
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .signature-font { font-family: 'Caveat', cursive; }
+
+  .dash {
+    max-width: 1180px; margin: 0 auto; padding: 20px 20px 40px;
+    position: relative;
+  }
+
+  /* ---------- Top bar / branding ---------- */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap; margin-bottom: 22px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--st-cyber-blue), var(--st-violet));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .95rem; letter-spacing: .02em;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  }
+  .brand-text { display: flex; flex-direction: column; }
+  .brand-text .name { font-weight: 700; font-size: 1.15rem; letter-spacing: .01em; line-height: 1.1; color: #fff; }
+  .sig-underline { height: 14px; margin-top: 2px; width: 150px; }
+  .sig-underline path {
+    stroke: url(#sigGrad); stroke-width: 2.4; fill: none; stroke-linecap: round;
+    stroke-dasharray: 220; stroke-dashoffset: 220;
+    animation: sign 1.6s ease forwards .3s;
+  }
+  @keyframes sign { to { stroke-dashoffset: 0; } }
+
+  .clockbox { text-align: right; }
+  .clockbox .time { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; color: var(--st-cyber-blue); text-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+  .clockbox .date { font-size: .75rem; color: var(--text-muted); letter-spacing: 0.05em; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; overflow: hidden; border-radius: 16px; padding: 28px 24px;
+    background: radial-gradient(120% 160% at 0% 0%, rgba(0, 240, 255, 0.15), transparent 50%),
+                radial-gradient(120% 160% at 100% 0%, rgba(255, 77, 148, 0.12), transparent 50%),
+                var(--st-panel);
+    border: 1px solid var(--st-border);
+    backdrop-filter: blur(12px);
+    margin-bottom: 22px;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
+  }
+  #netCanvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .4; pointer-events: none; }
+  .hero-inner { position: relative; z-index: 1; }
+  .hero h2 { margin: 0 0 6px; font-size: 1.7rem; letter-spacing: -0.02em; }
+  .hero p { margin: 0; color: var(--text-muted); font-size: .95rem; line-height: 1.5; max-width: 800px; }
+  .badge-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .badge {
+    font-size: .72rem; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--st-border);
+    background: rgba(255, 255, 255, .03); color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
+  }
+  .badge.live { color: var(--st-mint); border-color: rgba(0, 255, 135, 0.25); background: rgba(0, 255, 135, 0.02); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--st-mint); display: inline-block; margin-right: 6px; animation: pulseDot 1.4s infinite; box-shadow: 0 0 8px var(--st-mint); }
+  @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+  /* ---------- Grid / Cards ---------- */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
+  .stat-card {
+    background: var(--st-panel); border: 1px solid var(--st-border); border-radius: 16px; padding: 18px;
+    position: relative; overflow: hidden; backdrop-filter: blur(12px);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s, box-shadow 0.3s;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--st-border-hover);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+  .stat-card .icon { font-size: 1.4rem; margin-bottom: 4px; }
+  .stat-card .num { font-size: 1.8rem; font-weight: 700; margin: 6px 0 2px; font-family: 'JetBrains Mono', monospace; color: #fff; }
+  .stat-card .label { font-size: .78rem; color: var(--text-muted); }
+  .stat-card .bar { height: 4px; border-radius: 4px; margin-top: 12px; background: rgba(255, 255, 255, 0.05); overflow: hidden; }
+  .stat-card .bar i { display: block; height: 100%; border-radius: 4px; width: 0; transition: width 1.2s cubic-bezier(0.1, 0.8, 0.2, 1); }
+  
+  .c1 i { background: linear-gradient(90deg, var(--st-pink), var(--st-violet)); }
+  .c2 i { background: linear-gradient(90deg, var(--st-violet), var(--st-cyber-blue)); }
+  .c3 i { background: linear-gradient(90deg, var(--st-amber), var(--st-pink)); }
+  .c4 i { background: linear-gradient(90deg, var(--st-mint), var(--st-cyber-blue)); }
+
+  .cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+  /* ---------- Code snippet card ---------- */
+  .code-card { background: #090a12; border: 1px solid var(--st-border); border-radius: 16px; overflow: hidden; backdrop-filter: blur(12px); }
+  .code-head {
+    display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;
+    background: rgba(255, 255, 255, .02); border-bottom: 1px solid var(--st-border);
+  }
+  .traffic { display: flex; gap: 6px; }
+  .traffic span { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .traffic .rd { background: #ff5f57; } .traffic .yl { background: #febc2e; } .traffic .gr { background: #28c840; }
+  .code-head .fname { font-size: .75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em; }
+  .code-head button {
+    font-size: .72rem; background: var(--st-panel-strong); border: 1px solid var(--st-border); color: var(--st-cyber-blue);
+    padding: 5px 12px; border-radius: 20px; cursor: pointer; font-family: 'JetBrains Mono', monospace;
+    transition: all 0.2s;
+  }
+  .code-head button:hover { background: var(--st-cyber-blue); color: #000; border-color: var(--st-cyber-blue); box-shadow: 0 0 12px rgba(0, 240, 255, 0.3); }
+  .code-body { padding: 18px; font-family: 'JetBrains Mono', monospace; font-size: .82rem; line-height: 1.7; min-height: 150px; white-space: pre-wrap; color: #e2e0ff; }
+  .tk-kw { color: var(--st-pink); font-weight: 500; } .tk-fn { color: var(--st-cyber-blue); } .tk-str { color: var(--st-amber); } .tk-cm { color: #5c5973; font-style: italic; } .tk-num { color: var(--st-mint); }
+
+  /* ---------- Idea card ---------- */
+  .idea-card {
+    background: var(--st-panel); border: 1px solid var(--st-border); border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column; justify-content: space-between; backdrop-filter: blur(12px);
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .idea-card:hover { border-color: rgba(0, 240, 255, 0.3); }
+  .idea-card .top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: .95rem; }
+  .idea-card .top strong { color: #fff; }
+  .idea-card .top .bulb { font-size: 1.3rem; animation: flicker 3s infinite; }
+  @keyframes flicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(255,182,72,0.6)); } 20%, 24%, 55% { opacity: .4; filter: none; } }
+  .idea-card .quote { font-size: 1.05rem; line-height: 1.5; min-height: 80px; color: #e2e0ff; }
+  .idea-card .who { color: var(--text-muted); font-size: .8rem; margin-top: 8px; }
+  .idea-card button {
+    margin-top: 16px; align-self: flex-start; font-size: .75rem; padding: 7px 16px; border-radius: 20px;
+    border: none; background: linear-gradient(90deg, var(--st-pink), var(--st-violet));
+    color: #fff; cursor: pointer; font-weight: 700; transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+  }
+  .idea-card button:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255, 77, 148, 0.4); }
+
+  /* ---------- Ticker ---------- */
+  .ticker {
+    background: #090a12; border: 1px solid var(--st-border); border-radius: 14px; padding: 0; margin-bottom: 14px;
+    overflow: hidden; position: relative;
+  }
+  .ticker .tag { position: absolute; top: 11px; left: 14px; font-size: .68rem; color: var(--st-mint); font-family: 'JetBrains Mono', monospace; z-index: 2; background: #090a12; padding-right: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .ticker-track { display: flex; gap: 60px; white-space: nowrap; padding: 34px 0 12px; animation: scroll 26s linear infinite; }
+  .ticker-track span { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ---------- Weekly chart + footer CTA ---------- */
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .chart-card { background: var(--st-panel); border: 1px solid var(--st-border); border-radius: 16px; padding: 20px; backdrop-filter: blur(12px); }
+  .chart-card h4 { margin: 0 0 16px; font-size: .85rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.02em; }
+  .bars { display: flex; align-items: flex-end; gap: 10px; height: 90px; padding: 0 4px; }
+  .bars .b { flex: 1; background: linear-gradient(180deg, var(--st-violet), var(--st-cyber-blue)); border-radius: 6px 6px 2px 2px; height: 0; transition: height 1s cubic-bezier(.15, .85, .3, 1); opacity: 0.85; }
+  .bars .b:hover { opacity: 1; filter: drop-shadow(0 0 8px var(--st-cyber-blue)); }
+  .bars-labels { display: flex; gap: 10px; margin-top: 8px; padding: 0 4px; }
+  .bars-labels span { flex: 1; text-align: center; font-size: .65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
+  .cta-card {
+    border-radius: 16px; padding: 22px; border: 1px solid var(--st-border);
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(138, 43, 226, 0.08));
+    backdrop-filter: blur(12px); display: flex; flex-direction: column; justify-content: center;
+  }
+  .cta-card .eyebrow { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--st-amber); font-family: 'JetBrains Mono', monospace; }
+  .cta-card h3 { margin: 6px 0; font-size: 1.25rem; color: #fff; }
+  .cta-card p { margin: 0 0 14px; color: var(--text-muted); font-size: .88rem; line-height: 1.4; }
+  .cta-card a {
+    align-self: flex-start; text-decoration: none; color: #07080e; background: var(--st-cyber-blue);
+    padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: .82rem; transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 240, 255, 0.25);
+  }
+  .cta-card a:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0, 240, 255, 0.4); background: #fff; }
+
+  footer.sig {
+    text-align: center; margin-top: 32px; font-size: .78rem; color: var(--text-muted); line-height: 1.5;
+  }
+  footer.sig .signature-font { font-size: 1.4rem; color: var(--st-cyber-blue); margin-bottom: 2px; }
+
+  @media (max-width: 820px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .cols { grid-template-columns: 1fr; }
+    .bottom-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="dash">
+
+  <!-- ============ TOP BAR / BRANDING ============ -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">ST</div>
+      <div class="brand-text">
+        <div class="name">Signature Tech</div>
+        <svg class="sig-underline" viewBox="0 0 150 14" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sigGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#00f0ff"/>
+              <stop offset="100%" stop-color="#8a2be2"/>
+            </linearGradient>
+          </defs>
+          <path d="M2 10 C 20 2, 35 2, 48 8 S 75 14, 90 6 S 120 1, 148 9"/>
+        </svg>
+      </div>
+    </div>
+    <div class="clockbox">
+      <div class="time mono" id="clock">--:--:--</div>
+      <div class="date" id="dateline">loading date…</div>
+    </div>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <div class="hero">
+    <canvas id="netCanvas"></canvas>
+    <div class="hero-inner">
+      <h2 id="greeting">Welcome back, Player 👋</h2>
+      <p>Everything's green, coffee's hot, and the deploy pipeline is holding its breath. Head to the <strong>Games</strong> tab above whenever you need a break.</p>
+      <div class="badge-row">
+        <span class="badge live"><span class="dot"></span>All systems live</span>
+        <span class="badge">build #<span id="buildNum">0000</span></span>
+        <span class="badge">v2.4.1</span>
+        <span class="badge">☕ caffeine-powered</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STAT CARDS ============ -->
+  <div class="grid">
+    <div class="stat-card c1">
+      <div class="icon">🚀</div>
+      <div class="num" id="stat1">0</div>
+      <div class="label">Lines shipped today</div>
+      <div class="bar"><i style="width:0" data-target="78"></i></div>
+    </div>
+    <div class="stat-card c2">
+      <div class="icon">🐛</div>
+      <div class="num" id="stat2">0</div>
+      <div class="label">Bugs squashed (not created)</div>
+      <div class="bar"><i style="width:0" data-target="54"></i></div>
+    </div>
+    <div class="stat-card c3">
+      <div class="icon">☕</div>
+      <div class="num" id="stat3">0</div>
+      <div class="label">Cups of coffee consumed</div>
+      <div class="bar"><i style="width:0" data-target="91"></i></div>
+    </div>
+    <div class="stat-card c4">
+      <div class="icon">📈</div>
+      <div class="num" id="stat4">0%</div>
+      <div class="label">Uptime this week</div>
+      <div class="bar"><i style="width:0" data-target="99"></i></div>
+    </div>
+  </div>
+
+  <!-- ============ CODE + IDEA ============ -->
+  <div class="cols">
+    <div class="code-card">
+      <div class="code-head">
+        <div class="traffic"><span class="rd"></span><span class="yl"></span><span class="gr"></span></div>
+        <div class="fname" id="snippetFile">tip-of-the-day.js</div>
+        <button onclick="nextSnippet()">next tip →</button>
+      </div>
+      <div class="code-body mono" id="snippetBody"></div>
+    </div>
+
+    <div class="idea-card">
+      <div class="top"><span class="bulb">💡</span><strong>Idea Spark</strong></div>
+      <div class="quote" id="ideaText">Loading a spark of genius…</div>
+      <div class="who" id="ideaWho"></div>
+      <button onclick="nextIdea()">Give me another idea</button>
+    </div>
+  </div>
+
+  <!-- ============ LIVE TICKER ============ -->
+  <div class="ticker">
+    <span class="tag">● live feed</span>
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <!-- ============ CHART + CTA ============ -->
+  <div class="bottom-row">
+    <div class="chart-card">
+      <h4>This week's productivity (purely vibes-based)</h4>
+      <div class="bars" id="bars"></div>
+      <div class="bars-labels">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+      </div>
+    </div>
+    <div class="cta-card">
+      <div class="eyebrow">Need a break?</div>
+      <h3>The Games tab is calling.</h3>
+      <p>Your dashboard will still be here, judging you gently, when you get back.</p>
+      <a href="#games">Go play →</a>
+    </div>
+  </div>
+
+  <footer class="sig">
+    <div class="signature-font">Signature Tech</div>
+    <div>crafted with late nights &amp; way too much coffee</div>
+  </footer>
+
+</div>
+
+<script>
+  /* ---------- Clock ---------- */
+  function tick(){
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('dateline').textContent = now.toLocaleDateString([], {weekday:'long', month:'short', day:'numeric'});
+  }
+  tick(); setInterval(tick, 1000);
+  document.getElementById('buildNum').textContent = String(Math.floor(1000 + Math.random()*8999));
+
+  /* ---------- Greeting by time of day ---------- */
+  (function(){
+    const h = new Date().getHours();
+    const g = h < 5 ? 'Burning the midnight oil, Player 🌙' : h < 12 ? 'Good morning, Player ☀️' : h < 18 ? 'Good afternoon, Player 🌤️' : 'Good evening, Player 🌆';
+    document.getElementById('greeting').textContent = g;
+  })();
+
+  /* ---------- Animated stat counters + bars ---------- */
+  function animateCount(el, target, suffix=''){
+    let cur = 0; const step = Math.max(1, Math.round(target/40));
+    const t = setInterval(() => {
+      cur += step;
+      if(cur >= target){ cur = target; clearInterval(t); }
+      el.textContent = cur + suffix;
+    }, 25);
+  }
+  animateCount(document.getElementById('stat1'), 1200 + Math.floor(Math.random()*400));
+  animateCount(document.getElementById('stat2'), 12 + Math.floor(Math.random()*8));
+  animateCount(document.getElementById('stat3'), 4 + Math.floor(Math.random()*5));
+  animateCount(document.getElementById('stat4'), 97 + Math.floor(Math.random()*3), '%');
+  document.querySelectorAll('.bar i').forEach(bar => {
+    setTimeout(() => bar.style.width = bar.dataset.target + '%', 200);
+  });
+
+  /* ---------- Code snippet rotator ---------- */
+  const snippets = [
+    { file:'tip-of-the-day.js', code:`<span class="tk-cm">// today's tip</span>\n<span class="tk-kw">const</span> bug = <span class="tk-fn">find</span>(<span class="tk-str">'the one you swore wasn\\'t yours'</span>);\nbug.<span class="tk-fn">fix</span>(); <span class="tk-cm">// works on my machine ✅</span>` },
+    { file:'shortcut.js', code:`<span class="tk-cm">// keyboard shortcut of the day</span>\n<span class="tk-kw">const</span> save = () => ctrl + <span class="tk-str">'S'</span>;\n<span class="tk-fn">setInterval</span>(save, <span class="tk-num">1000</span>); <span class="tk-cm">// paranoia mode</span>` },
+    { file:'debugging.js', code:`<span class="tk-kw">function</span> <span class="tk-fn">debug</span>(problem) {\n  <span class="tk-fn">console</span>.log(problem);\n  <span class="tk-kw">return</span> <span class="tk-str">'it was a semicolon'</span>;\n}` },
+    { file:'motivation.js', code:`<span class="tk-kw">while</span> (bugs.length > <span class="tk-num">0</span>) {\n  coffee.<span class="tk-fn">refill</span>();\n  <span class="tk-cm">// one more won't hurt</span>\n}` },
+    { file:'friday-deploy.js', code:`<span class="tk-kw">if</span> (day === <span class="tk-str">'Friday'</span>) {\n  <span class="tk-fn">deploy</span>(<span class="tk-str">'production'</span>); <span class="tk-cm">// what could go wrong</span>\n}` }
+  ];
+  let snippetIdx = 0;
+  function renderSnippet(){
+    const s = snippets[snippetIdx];
+    document.getElementById('snippetFile').textContent = s.file;
+    document.getElementById('snippetBody').innerHTML = s.code;
+  }
+  function nextSnippet(){ snippetIdx = (snippetIdx+1) % snippets.length; renderSnippet(); }
+  renderSnippet();
+
+  /* ---------- Idea / quote rotator ---------- */
+  const ideas = [
+    { text:'“There are 10 types of people: those who understand binary, and those who don’t.”', who:'— every dev, eventually' },
+    { text:'What if the sidebar could collapse into a tiny mascot that judges your code silently?', who:'— 2am idea, needs review' },
+    { text:'“It’s not a bug, it’s an undocumented feature.”', who:'— unknown, probably you' },
+    { text:'Add a button that does nothing except say "nice click" — morale matters.', who:'— UX brainstorm' },
+    { text:'“Weeks of coding can save you hours of planning.”', who:'— cautionary tale' },
+    { text:'A dark mode so dark it needs its own dark mode.', who:'— design meeting, 11pm' }
+  ];
+  let ideaIdx = 0;
+  function renderIdea(){
+    document.getElementById('ideaText').textContent = ideas[ideaIdx].text;
+    document.getElementById('ideaWho').textContent = ideas[ideaIdx].who;
+  }
+  function nextIdea(){ ideaIdx = (ideaIdx+1) % ideas.length; renderIdea(); }
+  renderIdea();
+
+  /* ---------- Live ticker feed ---------- */
+  const feed = [
+    '✅ build passed on first try (suspicious)', '☕ coffee level: critical', '🚀 deployed to prod at 4:58pm on a Friday',
+    '🐛 bug found, immediately renamed "feature"', '📦 node_modules now visible from space',
+    '🔧 fixed it by turning it off and on again', '💬 "it works on my machine" — confirmed team motto',
+    '⚡ page load time: instant-ish', '🌙 last commit: 2:47am, no regrets'
+  ];
+  const track = document.getElementById('tickerTrack');
+  track.innerHTML = feed.concat(feed).map(f => `<span>${f}</span>`).join('');
+
+  /* ---------- Weekly bar chart ---------- */
+  const bars = document.getElementById('bars');
+  const heights = [40,65,50,80,95,30,20];
+  heights.forEach(h => {
+    const b = document.createElement('div');
+    b.className = 'b';
+    bars.appendChild(b);
+    setTimeout(() => b.style.height = h + '%', 250);
+  });
+
+  /* ---------- Lightweight live network background ---------- */
+  (function(){
+    const canvas = document.getElementById('netCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, points;
+    function resize(){
+      w = canvas.width = canvas.offsetWidth;
+      h = canvas.height = canvas.offsetHeight;
+    }
+    function initPoints(){
+      points = Array.from({length: 26}, () => ({
+        x: Math.random()*w, y: Math.random()*h,
+        vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3
+      }));
+    }
+    function frame(){
+      ctx.clearRect(0,0,w,h);
+      for(let i=0;i<points.length;i++){
+        points[i].x += points[i].vx; points[i].y += points[i].vy;
+        if(points[i].x<0||points[i].x>w) points[i].vx*=-1;
+        if(points[i].y<0||points[i].y>h) points[i].vy*=-1;
+      }
+      for(let i=0;i<points.length;i++){
+        for(let j=i+1;j<points.length;j++){
+          const dx=points[i].x-points[j].x, dy=points[i].y-points[j].y;
+          const dist=Math.hypot(dx,dy);
+          if(dist<120){
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.15*(1-dist/120)})`;
+            ctx.beginPath(); ctx.moveTo(points[i].x,points[i].y); ctx.lineTo(points[j].x,points[j].y); ctx.stroke();
+          }
+        }
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.4)';
+        ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 1.6, 0, Math.PI*2); ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    window.addEventListener('resize', () => { resize(); });
+    resize(); initPoints(); frame();
+  })();
+</script>
+
+</body>
+</html>
