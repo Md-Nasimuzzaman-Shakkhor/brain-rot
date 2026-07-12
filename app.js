@@ -39,6 +39,15 @@ function showToast(message) {
 }
 
 // ============ Game modal ============
+function focusGameFrame() {
+    const iframe = document.getElementById('gameFrame');
+    if (!iframe) return;
+    // Games listen for keydown on their own document, so the iframe (and its
+    // window) must actually hold keyboard focus or arrow keys never arrive.
+    iframe.focus();
+    try { iframe.contentWindow.focus(); } catch (err) { /* not loaded yet */ }
+}
+
 function openGame(gameUrl, gameName) {
     const modal = document.getElementById('gameModal');
     const iframe = document.getElementById('gameFrame');
@@ -47,19 +56,29 @@ function openGame(gameUrl, gameName) {
     iframe.src = gameUrl; // Loads the independent game file
     if (title) title.textContent = gameName || 'Now Playing';
     modal.classList.add('active');
+
+    // Focus as soon as the game finishes loading...
+    iframe.onload = focusGameFrame;
+    // ...and again shortly after, in case the load event fires before the
+    // browser is ready to hand off focus.
+    setTimeout(focusGameFrame, 150);
 }
 
 function closeGame() {
     const modal = document.getElementById('gameModal');
     const iframe = document.getElementById('gameFrame');
 
+    iframe.onload = null;
     iframe.src = ''; // Stops the game and audio instantly
     modal.classList.remove('active');
 }
 
-// Close modal on backdrop click or Escape key
+// Close modal on backdrop click or Escape key. Clicking the frame itself
+// re-focuses it, so a stray click never leaves the keyboard stuck on the
+// parent page.
 document.addEventListener('click', (e) => {
-    if (e.target.id === 'gameModal') closeGame();
+    if (e.target.id === 'gameModal') { closeGame(); return; }
+    if (e.target.id === 'gameFrame') focusGameFrame();
 });
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -84,6 +103,9 @@ function resizeDashboardFrame() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const yearEl = document.getElementById('footerYear');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
     const iframe = document.getElementById('dashboardFrame');
     if (iframe) {
         iframe.addEventListener('load', () => {

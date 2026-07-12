@@ -2,6 +2,14 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreElement = document.getElementById("scoreVal");
 
+// When this game is embedded in an iframe (as it is on the main hub), the
+// parent page may still hold keyboard focus even after the modal opens,
+// which makes arrow keys silently do nothing. Grabbing focus here — on load
+// and again on any click inside the game — guarantees this window is the
+// one that receives keydown events, regardless of who embeds it.
+window.addEventListener('load', () => window.focus());
+canvas.addEventListener('click', () => window.focus());
+
 const grid = 20;
 let count = 0;
 let score = 0;
