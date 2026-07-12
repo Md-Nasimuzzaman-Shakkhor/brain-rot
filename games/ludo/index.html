@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ludo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wood-dark:#3a2418; --wood-mid:#6b4423; --wood-light:#8a5a34;
+    --board:#f1e7d2; --board-line:#e0d2b4;
+    --brass:#c9a04c; --brass-light:#e6c877;
+    --ink:#2a1c12;
+    --r:#d94f4f; --r-dark:#a53535;
+    --g:#3fa96a; --g-dark:#287a49;
+    --y:#e3ab2f; --y-dark:#b0801a;
+    --b:#3f7fc1; --b-dark:#295c94;
+    --cell:32px; --token:22px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background: radial-gradient(ellipse at 50% -10%, #241a2e 0%, #12101a 60%, #0b0a10 100%);
+    font-family:'Nunito Sans', sans-serif; color:#f1e7d2; padding:18px; gap:14px;
+  }
+  h1{
+    font-family:'Fraunces', serif; font-weight:700; font-size:1.7rem; margin:0;
+    letter-spacing:.02em; color:#f6ecd8;
+  }
+  .tag{ font-size:.8rem; opacity:.55; letter-spacing:.08em; text-transform:uppercase; margin-top:-8px;}
+
+  /* ---- Setup screen ---- */
+  .setup{
+    background:linear-gradient(160deg,var(--wood-mid),var(--wood-dark));
+    padding:32px 30px; border-radius:16px; text-align:center; max-width:340px;
+    box-shadow:0 20px 50px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.06);
+  }
+  .setup p{opacity:.75; font-size:.9rem; line-height:1.5; margin:8px 0 22px;}
+  .choice-btn{
+    display:block; width:100%; margin:10px 0; padding:14px 16px; border-radius:10px; border:none;
+    background:var(--board); color:var(--ink); font-weight:800; font-size:.95rem; cursor:pointer;
+    box-shadow:0 4px 0 #b7a482, 0 6px 14px rgba(0,0,0,.3); transition:transform .12s, box-shadow .12s;
+  }
+  .choice-btn:hover{transform:translateY(-2px);}
+  .choice-btn:active{transform:translateY(2px); box-shadow:0 1px 0 #b7a482;}
+  .choice-btn .dots{display:flex; gap:6px; justify-content:center; margin-top:6px;}
+  .choice-btn .dots span{width:9px;height:9px;border-radius:50%;display:inline-block;}
+
+  /* ---- Game screen ---- */
+  .game{ display:none; flex-direction:column; align-items:center; gap:12px; }
+  .hud{ display:flex; align-items:center; gap:16px; background:rgba(255,255,255,.04); padding:8px 16px; border-radius:30px; }
+  .turn-pill{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:.85rem; letter-spacing:.03em; }
+  .swatch{ width:14px; height:14px; border-radius:50%; box-shadow:0 0 0 2px rgba(255,255,255,.2); }
+  .status{ font-size:.78rem; opacity:.65; min-width:130px; }
+
+  .dice-wrap{ display:flex; align-items:center; gap:10px; }
+  #dice-btn{
+    width:52px; height:52px; border-radius:12px; border:none; cursor:pointer;
+    background:linear-gradient(160deg,#fff,#e7e2d8); position:relative;
+    box-shadow:0 4px 0 #b7a482, 0 8px 16px rgba(0,0,0,.4);
+    display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); padding:8px; gap:2px;
+    transition:transform .08s;
+  }
+  #dice-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #b7a482; }
+  #dice-btn:disabled{ cursor:not-allowed; opacity:.6; }
+  #dice-btn.rolling{ animation:wobble .5s ease-in-out; }
+  @keyframes wobble{ 0%,100%{transform:rotate(0)} 25%{transform:rotate(-14deg)} 50%{transform:rotate(10deg)} 75%{transform:rotate(-6deg)} }
+  .pip{ width:8px; height:8px; margin:auto; border-radius:50%; background:var(--ink); opacity:0; }
+  .pip.on{ opacity:1; }
+
+  .board-frame{
+    padding:14px; border-radius:14px;
+    background:linear-gradient(155deg,var(--wood-light),var(--wood-dark) 70%);
+    box-shadow:0 25px 60px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.08);
+  }
+  .board{
+    position:relative; width:calc(var(--cell)*15); height:calc(var(--cell)*15);
+    background:var(--board); border-radius:6px; overflow:hidden;
+    box-shadow:inset 0 0 0 2px var(--brass);
+  }
+  .cell{ position:absolute; width:var(--cell); height:var(--cell); box-shadow:inset 0 0 0 1px var(--board-line); }
+  .cell.track{ background:var(--board); }
+  .cell.start-r{ background:var(--r); } .cell.start-g{ background:var(--g); }
+  .cell.start-y{ background:var(--y); } .cell.start-b{ background:var(--b); }
+  .cell.home-r{ background:var(--r); opacity:.85; } .cell.home-g{ background:var(--g); opacity:.85; }
+  .cell.home-y{ background:var(--y); opacity:.85; } .cell.home-b{ background:var(--b); opacity:.85; }
+  .cell.corner{ background:var(--board); }
+  .cell.center{
+    background:conic-gradient(var(--r) 0deg 90deg, var(--g) 90deg 180deg, var(--y) 180deg 270deg, var(--b) 270deg 360deg);
+    border-radius:4px; box-shadow:0 0 10px rgba(0,0,0,.3);
+  }
+  .star{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:13px; color:rgba(0,0,0,.35); pointer-events:none; }
+
+  .base{ position:absolute; border-radius:10px; box-shadow:inset 0 0 0 6px rgba(255,255,255,.55), inset 0 0 0 8px rgba(0,0,0,.08); }
+  .base.red{ background:var(--r); } .base.green{ background:var(--g); }
+  .base.yellow{ background:var(--y); } .base.blue{ background:var(--b); }
+  .nest{ position:absolute; width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,.85); box-shadow:inset 0 2px 4px rgba(0,0,0,.2); }
+
+  .token-layer{ position:absolute; inset:0; }
+  .token{
+    position:absolute; width:var(--token); height:var(--token); border-radius:50% 50% 50% 4px;
+    transform:rotate(45deg); border:2px solid rgba(255,255,255,.85); cursor:default;
+    transition:left .3s cubic-bezier(0.25, 1, 0.5, 1), top .3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow .2s;
+    box-shadow:0 3px 6px rgba(0,0,0,.4);
+  }
+  .token::after{ content:''; position:absolute; inset:3px; border-radius:50%; background:rgba(255,255,255,.35); }
+  .token.red{ background:linear-gradient(145deg,#f2807c,var(--r-dark)); }
+  .token.green{ background:linear-gradient(145deg,#7fdba0,var(--g-dark)); }
+  .token.yellow{ background:linear-gradient(145deg,#f5cf7a,var(--y-dark)); }
+  .token.blue{ background:linear-gradient(145deg,#87b6e8,var(--b-dark)); }
+  .token.movable{ cursor:pointer; animation:pulse 1s infinite; z-index:5; }
+  @keyframes pulse{ 0%,100%{ box-shadow:0 3px 6px rgba(0,0,0,.4), 0 0 0 0 rgba(255,255,255,.6);} 50%{ box-shadow:0 3px 6px rgba(0,0,0,.4), 0 0 0 6px rgba(255,255,255,0);} }
+
+  .banner{
+    display:none; position:fixed; inset:0; background:rgba(10,8,14,.75); align-items:center; justify-content:center; z-index:50;
+  }
+  .banner-card{ background:linear-gradient(160deg,var(--wood-mid),var(--wood-dark)); padding:34px 40px; border-radius:16px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.6); }
+  .banner-card h2{ font-family:'Fraunces',serif; margin:0 0 6px; font-size:1.5rem; }
+  .banner-card button{ margin-top:16px; padding:10px 22px; border-radius:8px; border:none; background:var(--board); font-weight:800; cursor:pointer; }
+
+  @media (max-width:520px){
+    :root{ --cell:24px; --token:16px; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>Ludo</h1>
+  <div class="tag" id="subtitle">gather round the board</div>
+
+  <div class="setup" id="setup">
+    <p>Race all four of your tokens home. Roll a six to leave base, land on an opponent to send them packing.</p>
+    <button class="choice-btn" onclick="startGame(2)">2 Players
+      <span class="dots"><span style="background:var(--r)"></span><span style="background:var(--y)"></span></span>
+    </button>
+    <button class="choice-btn" onclick="startGame(4)">4 Players
+      <span class="dots"><span style="background:var(--r)"></span><span style="background:var(--g)"></span><span style="background:var(--y)"></span><span style="background:var(--b)"></span></span>
+    </button>
+  </div>
+
+  <div class="game" id="game">
+    <div class="hud">
+      <div class="turn-pill"><span class="swatch" id="turn-swatch"></span><span id="turn-name">RED</span></div>
+      <div class="status" id="status">Roll to begin</div>
+      <div class="dice-wrap">
+        <button id="dice-btn" onclick="rollDice()">
+          <div class="pip" id="p1"></div><div class="pip" id="p2"></div><div class="pip" id="p3"></div>
+          <div class="pip" id="p4"></div><div class="pip" id="p5"></div><div class="pip" id="p6"></div>
+          <div class="pip" id="p7"></div><div class="pip" id="p8"></div><div class="pip" id="p9"></div>
+        </button>
+      </div>
+    </div>
+    <div class="board-frame">
+      <div class="board" id="board"></div>
+    </div>
+  </div>
+
+  <div class="banner" id="banner">
+    <div class="banner-card">
+      <h2 id="banner-text">🎉 Red wins!</h2>
+      <button onclick="location.reload()">Play again</button>
+    </div>
+  </div>
+
+<script>
+const CELL = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cell'));
+const TOKEN = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--token'));
+
+const PATH = [
+  [6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],
+  [6,9],[6,10],[6,11],[6,12],[6,13],[6,14],[7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],
+  [9,8],[10,8],[11,8],[12,8],[13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],
+  [8,5],[8,4],[8,3],[8,2],[8,1],[8,0],[7,0],[6,0]
+];
+const START = { red:0, green:13, yellow:26, blue:39 };
+const SAFE = new Set([0,8,13,21,26,34,39,47]);
+const HOME_COLS = {
+  red:   [[7,1],[7,2],[7,3],[7,4],[7,5],[7,6]],
+  green: [[1,7],[2,7],[3,7],[4,7],[5,7],[6,7]],
+  yellow:[[7,13],[7,12],[7,11],[7,10],[7,9],[7,8]],
+  blue:  [[13,7],[12,7],[11,7],[10,7],[9,7],[8,7]]
+};
+const BASE_SLOTS = {
+  red:   [[1.7,1.7],[1.7,4.3],[4.3,1.7],[4.3,4.3]],
+  green: [[1.7,10.7],[1.7,13.3],[4.3,10.7],[4.3,13.3]],
+  yellow:[[10.7,10.7],[10.7,13.3],[13.3,10.7],[13.3,13.3]],
+  blue:  [[10.7,1.7],[10.7,4.3],[13.3,1.7],[13.3,4.3]]
+};
+const ALL_COLORS = ['red','green','yellow','blue'];
+const DOT_PATTERNS = {1:[5],2:[1,9],3:[1,5,9],4:[1,3,7,9],5:[1,3,5,7,9],6:[1,3,4,6,7,9]};
+
+let numPlayers = 4;
+let activeColors = ALL_COLORS;
+let activeIdx = 0;
+let diceValue = 0;
+let consecutiveSixes = 0;
+let awaitingMove = false;
+let movableSet = new Set();
+let gameOver = false;
+
+let tokens = {}; 
+let tokenEls = {};
+
+function startGame(players){
+  numPlayers = players;
+  activeColors = players === 2 ? ['red','yellow'] : ALL_COLORS;
+  activeColors.forEach(c => tokens[c] = [-1,-1,-1,-1]);
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('game').style.display = 'flex';
+  buildBoard();
+  updateTurnUI();
+}
+
+function inBase(r,c){
+  if(r<=5 && c<=5) return 'red';
+  if(r<=5 && c>=9) return 'green';
+  if(r>=9 && c>=9) return 'yellow';
+  if(r>=9 && c<=5) return 'blue';
+  return null;
+}
+
+function buildBoard(){
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  const cell = CELL();
+
+  const pathSet = new Map(); 
+  PATH.forEach((rc,i) => pathSet.set(rc[0]+','+rc[1], i));
+  const homeSet = new Map(); 
+  Object.entries(HOME_COLS).forEach(([color,cells]) => cells.forEach(rc => homeSet.set(rc[0]+','+rc[1], color)));
+
+  for(let r=0; r<15; r++){
+    for(let c=0; c<15; c++){
+      if(inBase(r,c)) continue;
+      const key = r+','+c;
+      const div = document.createElement('div');
+      div.className = 'cell';
+      div.style.left = (c*cell)+'px';
+      div.style.top = (r*cell)+'px';
+
+      if(pathSet.has(key)){
+        const idx = pathSet.get(key);
+        div.classList.add('track');
+        if(idx === START.red) div.classList.add('start-r');
+        else if(idx === START.green) div.classList.add('start-g');
+        else if(idx === START.yellow) div.classList.add('start-y');
+        else if(idx === START.blue) div.classList.add('start-b');
+        if(SAFE.has(idx)){
+        const star = document.createElement('div');
+        star.className = 'star'; 
+        star.textContent = '★';
+        div.appendChild(star);
+        }
+      } else if(homeSet.has(key)){
+        div.classList.add('home-' + homeSet.get(key)[0]);
+      } else if(r===7 && c===7){
+        div.classList.add('center');
+      } else {
+        div.classList.add('corner');
+      }
+      board.appendChild(div);
+    }
+  }
+
+  const baseDefs = { red:[0,0], green:[0,9], yellow:[9,9], blue:[9,0] };
+  Object.entries(baseDefs).forEach(([color,[r,c]]) => {
+    const base = document.createElement('div');
+    base.className = 'base ' + color;
+    base.style.left = (c*cell)+'px'; base.style.top = (r*cell)+'px';
+    base.style.width = (cell*6)+'px'; base.style.height = (cell*6)+'px';
+    BASE_SLOTS[color].forEach(([rr,cc]) => {
+      const nest = document.createElement('div');
+      nest.className = 'nest';
+      nest.style.left = (cc*cell - 10)+'px'; nest.style.top = (rr*cell - 10)+'px';
+      base.appendChild(nest);
+    });
+    board.appendChild(base);
+  });
+
+  const layer = document.createElement('div');
+  layer.className = 'token-layer';
+  layer.id = 'token-layer';
+  board.appendChild(layer);
+
+  activeColors.forEach(color => {
+    tokenEls[color] = [];
+    for(let i=0;i<4;i++){
+      const el = document.createElement('div');
+      el.className = 'token ' + color;
+      el.onclick = () => tokenClicked(color, i);
+      layer.appendChild(el);
+      tokenEls[color].push(el);
+    }
+  });
+
+  renderTokens();
+}
+
+function getCoord(color, pos, idx){
+  if(pos === -1) return BASE_SLOTS[color][idx];
+  if(pos <= 50){ const abs=(START[color]+pos)%52; return PATH[abs]; }
+  if(pos <= 56) return HOME_COLS[color][pos-51];
+  return [7,7];
+}
+
+function renderTokens(){
+  const cell = CELL(), tok = TOKEN();
+  const groups = {};
+  activeColors.forEach(color => {
+    tokens[color].forEach((pos,i) => {
+      const [r,c] = getCoord(color,pos,i);
+      const key = Math.round(r*10)+','+Math.round(c*10);
+      (groups[key] = groups[key] || []).push([color,i]);
+    });
+  });
+
+  activeColors.forEach(color => {
+    tokens[color].forEach((pos,i) => {
+      const [r,c] = getCoord(color,pos,i);
+      const key = Math.round(r*10)+','+Math.round(c*10);
+      const group = groups[key];
+      let dx=0, dy=0;
+      if(group.length > 1){
+        const gi = group.findIndex(g => g[0]===color && g[1]===i);
+        const offsets = [[-5,-5],[5,-5],[-5,5],[5,5]];
+        [dx,dy] = offsets[gi % 4];
+      }
+      const el = tokenEls[color][i];
+      el.style.left = (c*cell + (cell-tok)/2 + dx) + 'px';
+      el.style.top  = (r*cell + (cell-tok)/2 + dy) + 'px';
+      el.classList.toggle('movable', awaitingMove && color === activeColors[activeIdx] && movableSet.has(i));
+    });
+  });
+}
+
+function colorHex(color){
+  return getComputedStyle(document.documentElement).getPropertyValue('--' + color[0]);
+}
+
+function updateTurnUI(){
+  const color = activeColors[activeIdx];
+  document.getElementById('turn-name').textContent = color.toUpperCase();
+  document.getElementById('turn-swatch').style.background = colorHex(color);
+  document.getElementById('status').textContent = 'Roll the dice';
+  document.getElementById('dice-btn').disabled = false;
+  awaitingMove = false; movableSet = new Set();
+  renderTokens();
+}
+
+function setPips(v){
+  for(let i=1;i<=9;i++) document.getElementById('p'+i).classList.remove('on');
+  DOT_PATTERNS[v].forEach(p => document.getElementById('p'+p).classList.add('on'));
+}
+
+function getMovableTokens(color){
+  const res = [];
+  tokens[color].forEach((p,i) => {
+    if(p === 57) return;
+    if(p === -1){ if(diceValue === 6) res.push(i); return; }
+    if(p + diceValue <= 57) res.push(i);
+  });
+  return res;
+}
+
+function rollDice(){
+  if(gameOver) return;
+  const btn = document.getElementById('dice-btn');
+  btn.disabled = true;
+  btn.classList.add('rolling');
+  let ticks = 0;
+  const anim = setInterval(() => {
+    setPips(1 + Math.floor(Math.random()*6));
+    ticks++;
+    if(ticks > 8){
+      clearInterval(anim);
+      btn.classList.remove('rolling');
+      diceValue = 1 + Math.floor(Math.random()*6);
+      setPips(diceValue);
+      
+      if(diceValue === 6){
+        consecutiveSixes++;
+      } else {
+        consecutiveSixes = 0;
+      }
+
+      if(consecutiveSixes === 3){
+        document.getElementById('status').textContent = '3 Sixes! Turn lost.';
+        setTimeout(() => {
+          nextTurn();
+        }, 1200);
+      } else {
+        resolveAfterRoll();
+      }
+    }
+  }, 65);
+}
+
+function resolveAfterRoll(){
+  const color = activeColors[activeIdx];
+  const moves = getMovableTokens(color);
+  if(moves.length === 0){
+    document.getElementById('status').textContent = 'No valid move';
+    setTimeout(proceedNoMove, 1000);
+  } else {
+    document.getElementById('status').textContent = 'Tap a token to move';
+    movableSet = new Set(moves);
+    awaitingMove = true;
+    renderTokens();
+  }
+}
+
+function proceedNoMove(){
+  if(diceValue === 6 && consecutiveSixes < 3){
+    document.getElementById('status').textContent = 'Six! Roll again';
+    document.getElementById('dice-btn').disabled = false;
+  } else {
+    nextTurn();
+  }
+}
+
+function tokenClicked(color, idx){
+  if(!awaitingMove || gameOver) return;
+  if(color !== activeColors[activeIdx]) return;
+  if(!movableSet.has(idx)) return;
+  awaitingMove = false;
+  moveToken(color, idx);
+}
+
+function moveToken(color, idx){
+  const cur = tokens[color][idx];
+  const next = cur === -1 ? 0 : cur + diceValue;
+  tokens[color][idx] = next;
+  renderTokens();
+  document.getElementById('status').textContent = 'Moving…';
+
+  setTimeout(() => {
+    if(next <= 50){
+      const absIdx = (START[color] + next) % 52;
+      if(!SAFE.has(absIdx)){
+        let captured = false;
+        activeColors.forEach(c2 => {
+          if(c2 === color) return;
+          tokens[c2].forEach((p,i2) => {
+            if(p >= 0 && p <= 50 && (START[c2]+p)%52 === absIdx){
+              tokens[c2][i2] = -1;
+              captured = true;
+            }
+          });
+        });
+        if(captured){ document.getElementById('status').textContent = 'Captured!'; renderTokens(); }
+      }
+    }
+    checkWinAndProceed(color);
+  }, 480);
+}
+
+function checkWinAndProceed(color){
+  if(tokens[color].every(p => p === 57)){
+    endGame(color);
+    return;
+  }
+  if(diceValue === 6 && consecutiveSixes < 3){
+    document.getElementById('status').textContent = 'Six! Roll again';
+    document.getElementById('dice-btn').disabled = false;
+    awaitingMove = false;
+    movableSet = new Set();
+  } else {
+    nextTurn();
+  }
+}
+
+function nextTurn(){
+  consecutiveSixes = 0;
+  activeIdx = (activeIdx + 1) % activeColors.length;
+  updateTurnUI();
+}
+
+function endGame(color){
+  gameOver = true;
+  document.getElementById('banner-text').textContent = '🎉 ' + color.toUpperCase() + ' wins!';
+  document.getElementById('banner').style.display = 'flex';
+}
+</script>
+</body>
+</html>
