@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Arena Sandbox</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="arena-style.css">
+</head>
+<body class="arena-body">
+    <div class="arena-container">
+        <div class="page-title">
+            <h2>⚽ Football Arena</h2>
+            <span class="sub">el clásico & fan corner</span>
+        </div>
+
+        <div class="arena-grid">
+            <!-- Column 1: Upcoming Matches -->
+            <section class="arena-card">
+                <div class="panel-header">
+                    <h3>📅 Upcoming Fixtures</h3>
+                    <span class="news-badge" style="background: rgba(99,102,241,0.1); color: var(--accent);">SCHEDULE</span>
+                </div>
+                <div id="upcoming-feed" class="arena-data-box">
+                    <div class="skeleton-item"></div>
+                </div>
+            </section>
+
+            <!-- Column 2: Recent Results -->
+            <section class="arena-card">
+                <div class="panel-header">
+                    <h3>🏁 Recent Results</h3>
+                    <span class="pulse-badge"><span class="pulse-dot"></span>LATEST</span>
+                </div>
+                <div id="scores-feed" class="arena-data-box">
+                    <div class="skeleton-item"></div>
+                </div>
+            </section>
+
+            <!-- Column 3: Fan Zone (Madrid, Barca & Rumors) -->
+            <section class="arena-card">
+                <div class="panel-header">
+                    <h3>🔥 Real vs Barca Hub</h3>
+                    <span class="news-badge">HOT TOPICS</span>
+                </div>
+                <div id="news-feed" class="arena-data-box">
+                    <div class="skeleton-item"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="arena-app.js"></script>
+</body>
+</html>

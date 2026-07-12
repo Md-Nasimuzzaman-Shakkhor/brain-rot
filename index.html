@@ -35,7 +35,7 @@
                 <li class="nav-tab" onclick="switchTab('games', event)">🎮 Games</li>
                 <li class="nav-tab" onclick="switchTab('about', event)">👤 About</li>
                 <li class="nav-tab" onclick="switchTab('shop', event)">🛍️ Shop</li>
-                <li class="nav-tab" onclick="switchTab('news', event)">📰 Newsboard</li>
+                <li class="nav-tab" onclick="switchTab('news', event)">⚽ Football</li>
             </ul>
         </nav>
 
@@ -111,13 +111,9 @@
                 </div>
             </div>
 
-            <div id="page-news" class="content-page">
-                <div class="page-title"><h2>Newsboard</h2><span class="sub">nothing new... yet</span></div>
-                <div class="empty-state">
-                    <div class="emoji">📰</div>
-                    <h3>No news yet</h3>
-                    <p>Post updates, patch notes, or announcements here as the site grows.</p>
-                </div>
+            <div id="page-news" class="content-page fill">
+                <div class="page-title"><h2></h2><span class="sub"></span></div>
+                <iframe src="football-arena/index.html" class="dashboard-frame" style="height: calc(100vh - 140px);"></iframe>
             </div>
         </div>
 
