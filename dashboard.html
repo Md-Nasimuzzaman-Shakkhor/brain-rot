@@ -84,6 +84,13 @@
     background:rgba(255,255,255,.03); color:var(--text-muted); font-family:'JetBrains Mono',monospace;
   }
   .badge.live{ color:var(--st-mint); border-color:rgba(61,220,151,.35); }
+  .badge.st-badge{ display:inline-flex; align-items:center; gap:6px; }
+  .st-mark{
+    width:15px; height:15px; border-radius:5px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--st-violet), var(--st-pink));
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:7px; font-weight:800; color:#fff;
+  }
   .dot{ width:6px; height:6px; border-radius:50%; background:var(--st-mint); display:inline-block; margin-right:6px; animation:pulseDot 1.4s infinite; }
   @keyframes pulseDot{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
 
@@ -102,6 +109,77 @@
   .c2 i{ background:linear-gradient(90deg,var(--st-violet),#7ea2ff); }
   .c3 i{ background:linear-gradient(90deg,var(--st-amber),#ff8a4d); }
   .c4 i{ background:linear-gradient(90deg,var(--st-mint),#38c6ff); }
+
+  /* ---------- Meme Wall ---------- */
+  .meme-card{
+    display:grid; grid-template-columns: 220px 1fr; gap:20px; align-items:center;
+    background:var(--st-panel); border:1px solid var(--st-border); border-radius:16px;
+    padding:18px; margin-bottom:14px; overflow:hidden; position:relative;
+  }
+  .meme-frame{
+    position:relative; border-radius:12px; overflow:hidden; border:1px solid var(--st-border);
+    box-shadow:0 10px 26px rgba(0,0,0,.4);
+  }
+  .meme-frame img{ display:block; width:100%; height:auto; }
+  .meme-frame .stamp{
+    position:absolute; top:8px; right:8px; background:rgba(10,11,18,.75); color:var(--st-amber);
+    font-size:.6rem; font-weight:800; padding:3px 8px; border-radius:20px; letter-spacing:.03em;
+    font-family:'JetBrains Mono',monospace; border:1px solid rgba(255,182,72,.4);
+  }
+  .meme-body .eyebrow{ font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--st-pink); font-family:'JetBrains Mono',monospace; margin-bottom:6px; }
+  .meme-body h3{ margin:0 0 8px; font-size:1.2rem; }
+  .meme-body p{ margin:0 0 14px; color:var(--text-muted); font-size:.88rem; line-height:1.5; }
+  .meme-actions{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .laugh-btn{
+    font-size:.8rem; padding:7px 16px; border-radius:20px; border:1px solid var(--st-border);
+    background:linear-gradient(90deg,var(--st-pink),var(--st-violet)); color:#fff; cursor:pointer; font-weight:700;
+  }
+  .laugh-count{ font-size:.78rem; color:var(--text-muted); font-family:'JetBrains Mono',monospace; }
+  @media (max-width:640px){ .meme-card{ grid-template-columns:1fr; } .meme-frame{ max-width:220px; margin:0 auto; } }
+
+  /* ---------- Lab / Football twin cards ---------- */
+  .twin-card{
+    background:var(--st-panel); border:1px solid var(--st-border); border-radius:14px; padding:18px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .twin-card .top{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .twin-card .top .ic{ font-size:1.2rem; }
+  .twin-card .quote{ font-size:.95rem; line-height:1.5; min-height:56px; }
+  .twin-card button{
+    margin-top:14px; align-self:flex-start; font-size:.75rem; padding:6px 14px; border-radius:20px;
+    border:1px solid var(--st-border); background:var(--st-panel-strong); color:var(--text); cursor:pointer; font-weight:700;
+  }
+  .lab-progress{ margin-top:12px; }
+  .lab-progress .row{ display:flex; justify-content:space-between; font-size:.68rem; color:var(--text-muted); margin-bottom:5px; font-family:'JetBrains Mono',monospace; }
+  .lab-progress .track{ height:6px; border-radius:6px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .lab-progress .fill{ height:100%; background:linear-gradient(90deg,var(--st-amber),var(--st-pink)); border-radius:6px; transition:width .6s ease; }
+
+  .score-box{
+    margin-top:12px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,.03);
+    border:1px solid var(--st-border); font-size:.82rem; display:none;
+  }
+  .score-box.show{ display:block; }
+  .score-box .score{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1rem; color:var(--st-mint); }
+
+  /* ---------- Squad bucket list ---------- */
+  .bucket-card{
+    background:var(--st-panel); border:1px solid var(--st-border); border-radius:14px; padding:18px; margin-bottom:14px;
+  }
+  .bucket-card h4{ margin:0 0 4px; font-size:.95rem; }
+  .bucket-card .sub{ font-size:.76rem; color:var(--text-muted); margin-bottom:14px; }
+  .bucket-list{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .bucket-list li{
+    display:flex; align-items:center; gap:10px; font-size:.85rem; padding:9px 12px; border-radius:10px;
+    background:rgba(255,255,255,.025); border:1px solid var(--st-border); cursor:pointer; transition:background .2s;
+  }
+  .bucket-list li:hover{ background:rgba(255,255,255,.05); }
+  .bucket-list li .chk{
+    width:16px; height:16px; border-radius:5px; border:1.5px solid var(--st-border); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:.65rem; transition:all .2s;
+  }
+  .bucket-list li.done .chk{ background:linear-gradient(135deg,var(--st-mint),#38c6ff); border-color:transparent; }
+  .bucket-list li.done .label{ text-decoration:line-through; color:var(--text-muted); }
+  @media (max-width:640px){ .bucket-list{ grid-template-columns:1fr; } }
 
   .cols{ display:grid; grid-template-columns: 1.3fr 1fr; gap:14px; margin-bottom:14px; }
 
@@ -174,6 +252,19 @@
     text-align:center; margin-top:26px; font-size:.8rem; color:var(--text-muted);
   }
   footer.sig .signature-font{ font-size:1.3rem; color:var(--text); }
+  .footer-st{
+    display:flex; align-items:center; justify-content:center; gap:6px; margin-top:10px;
+    font-size:.72rem; font-family:'JetBrains Mono',monospace;
+  }
+  .footer-st strong{
+    background:linear-gradient(90deg,var(--st-violet),var(--st-pink));
+    -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800;
+  }
+  .mini-sig{ width:64px; height:10px; }
+  .mini-sig path{
+    stroke:var(--st-pink); stroke-width:2; fill:none; stroke-linecap:round;
+    stroke-dasharray:160; stroke-dashoffset:160; animation:sign 1.4s ease forwards 1s;
+  }
 
   @media (max-width:820px){
     .grid{ grid-template-columns: repeat(2,1fr); }
@@ -214,12 +305,30 @@
     <canvas id="netCanvas"></canvas>
     <div class="hero-inner">
       <h2 id="greeting">Welcome back, Player 👋</h2>
-      <p>Everything's green, coffee's hot, and the deploy pipeline is holding its breath. Head to the <strong>Games</strong> tab above whenever you need a break.</p>
+      <p>Nothing's on fire, the WiFi is holding on by a thread, and someone in the group owes an apology for last night's football take. Head to the <strong>Games</strong> tab whenever the labs get unbearable.</p>
       <div class="badge-row">
         <span class="badge live"><span class="dot"></span>All systems live</span>
         <span class="badge">build #<span id="buildNum">0000</span></span>
         <span class="badge">v2.4.1</span>
         <span class="badge">☕ caffeine-powered</span>
+        <span class="badge st-badge"><span class="st-mark">ST</span>Powered by Signature Tech</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MEME WALL ============ -->
+  <div class="meme-card">
+    <div class="meme-frame">
+      <img src="meme.png" alt="The squad's classic CID meme — 'Kya? Ye kiya bak rhe ho, Piyare bhai'">
+      <span class="stamp">certified squad classic</span>
+    </div>
+    <div class="meme-body">
+      <div class="eyebrow">Hall of Fame · Meme #1</div>
+      <h3>"Kya? Ye kiya bak rhe ho, Piyare bhai" 😭</h3>
+      <p id="memeCaption">The official response to literally every excuse anyone in this group has ever given. Late to a call? Forgot the assignment? Lost at FIFA and blaming lag? This is the reply. No context needed anymore — we've reached meme singularity.</p>
+      <div class="meme-actions">
+        <button class="laugh-btn" onclick="laughAgain()">😂 Relive it again</button>
+        <span class="laugh-count"><span id="laughCount">247</span> group laughs and counting</span>
       </div>
     </div>
   </div>
@@ -271,6 +380,37 @@
     </div>
   </div>
 
+  <!-- ============ LAB SURVIVAL + FOOTBALL CORNER ============ -->
+  <div class="cols">
+    <div class="twin-card">
+      <div class="top"><span class="ic">🧪</span><strong>Boring Lab Survival Kit</strong></div>
+      <div class="quote" id="labText">Loading today's dose of motivation…</div>
+      <div class="lab-progress">
+        <div class="row"><span>Patience remaining</span><span id="labPct">72%</span></div>
+        <div class="track"><div class="fill" id="labFill" style="width:0"></div></div>
+      </div>
+      <button onclick="nextLab()">One more pep talk 🙏</button>
+    </div>
+
+    <div class="twin-card">
+      <div class="top"><span class="ic">⚽</span><strong>Late Night Football Corner</strong></div>
+      <div class="quote" id="footballText">Loading tonight's hot take…</div>
+      <div class="score-box" id="scoreBox">
+        <div>Tonight's completely made-up scoreline:</div>
+        <div class="score" id="scoreLine">— vs —</div>
+        <div id="scoreCommentary" style="color:var(--text-muted); font-size:.78rem; margin-top:4px;"></div>
+      </div>
+      <button onclick="simulateScore()">🎲 Simulate tonight's score</button>
+    </div>
+  </div>
+
+  <!-- ============ SQUAD BUCKET LIST ============ -->
+  <div class="bucket-card">
+    <h4>🪣 Squad Bucket List</h4>
+    <div class="sub">tap to mark done — nothing is saved, nothing is safe, just like our plans</div>
+    <ul class="bucket-list" id="bucketList"></ul>
+  </div>
+
   <!-- ============ LIVE TICKER ============ -->
   <div class="ticker">
     <span class="tag">● live feed</span>
@@ -289,14 +429,20 @@
     <div class="cta-card">
       <div class="eyebrow">Need a break?</div>
       <h3>The Games tab is calling.</h3>
-      <p>Your dashboard will still be here, judging you gently, when you get back.</p>
+      <p>Someone in the group WILL lose at Ludo and blame the dice. Go find out who.</p>
       <a href="#games">Go play →</a>
     </div>
   </div>
 
   <footer class="sig">
     <div class="signature-font">BRAINROT</div>
-    <div>crafted with late nights &amp; way too much coffee</div>
+    <div>crafted with late nights, bad wifi &amp; way too much coffee</div>
+    <div class="footer-st">
+      <span class="st-mark">ST</span>Powered by <strong>Signature Tech</strong>
+      <svg class="mini-sig" viewBox="0 0 100 14" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 10 C 14 2, 25 2, 34 8 S 55 14, 65 6 S 86 1, 98 9"/>
+      </svg>
+    </div>
   </footer>
 
 </div>
@@ -335,6 +481,101 @@
     setTimeout(() => bar.style.width = bar.dataset.target + '%', 200);
   });
 
+  /* ---------- Meme Wall ---------- */
+  let laughTotal = 247;
+  const laughLines = [
+    "The official response to literally every excuse anyone in this group has ever given. Late to a call? Forgot the assignment? Lost at FIFA and blaming lag? This is the reply. No context needed anymore — we've reached meme singularity.",
+    "Someone sends this in the group chat at least once a day. It has replaced actual words at this point.",
+    "Historians will one day study this screenshot to understand exactly how unserious we were.",
+    "This meme has ended more arguments than actual logic ever has.",
+    "Send this, and the conversation is legally over. No further discussion permitted."
+  ];
+  let laughIdx = 0;
+  function laughAgain(){
+    laughTotal += Math.floor(Math.random()*4) + 1;
+    document.getElementById('laughCount').textContent = laughTotal;
+    laughIdx = (laughIdx + 1) % laughLines.length;
+    document.getElementById('memeCaption').textContent = laughLines[laughIdx];
+  }
+
+  /* ---------- Boring Lab Survival Kit ---------- */
+  const labLines = [
+    "You have survived every boring lab that came before this one. Statistically, this one ends too.",
+    "Pro tip: nodding slowly makes it look like you're taking notes. It is not. Keep nodding.",
+    "The lab manual has the answer. So does literally anyone who finished five minutes early.",
+    "Somewhere, a professor is also bored of explaining this. You are both victims here.",
+    "Breathe in. Breathe out. Check the clock. Regret checking the clock.",
+    "This experiment 'should take 20 minutes.' It has taken 20 minutes three times now.",
+    "Remember: the WiFi being down is not your fault, but it is definitely your excuse."
+  ];
+  let labIdx = 0;
+  function nextLab(){
+    labIdx = (labIdx + 1) % labLines.length;
+    document.getElementById('labText').textContent = labLines[labIdx];
+    const pct = Math.floor(Math.random()*40) + 20;
+    document.getElementById('labPct').textContent = pct + '%';
+    document.getElementById('labFill').style.width = pct + '%';
+  }
+
+  /* ---------- Late Night Football Corner ---------- */
+  const footballLines = [
+    "\"He was clearly offside\" — said with zero camera angles and total confidence, as always.",
+    "It's 1am, the match ended an hour ago, and the group chat is still 0-0 on agreeing about that penalty.",
+    "Someone is about to argue that their team 'deserved it more.' Nobody asked. Everybody's listening.",
+    "Tactical genius activates the moment the actual manager makes a substitution you disagree with.",
+    "\"I could've saved that\" — a group member who has never played in goal, ever, in their life.",
+    "The real final score tonight: sleep 0, football talk 90+7."
+  ];
+  let footballIdx = 0;
+  function renderFootball(){
+    document.getElementById('footballText').textContent = footballLines[footballIdx];
+  }
+  renderFootball();
+  setInterval(() => {
+    footballIdx = (footballIdx + 1) % footballLines.length;
+    renderFootball();
+  }, 6000);
+
+  const teams = ['Midnight FC', 'Sleepy United', 'Deadline Rovers', 'Lab Coat City', 'Group Chat Athletic', 'Offside Academy'];
+  const commentary = [
+    "A result nobody predicted, including the two teams playing.",
+    "Somewhere, a VAR official is also confused.",
+    "This scoreline settles nothing and will be argued about until 3am regardless.",
+    "Purely simulated. Purely still going to cause a group chat war.",
+    "Both fanbases (all four of you) are furious."
+  ];
+  function simulateScore(){
+    const a = teams[Math.floor(Math.random()*teams.length)];
+    let b = teams[Math.floor(Math.random()*teams.length)];
+    while(b === a) b = teams[Math.floor(Math.random()*teams.length)];
+    const sa = Math.floor(Math.random()*5), sb = Math.floor(Math.random()*5);
+    document.getElementById('scoreLine').textContent = `${a} ${sa} — ${sb} ${b}`;
+    document.getElementById('scoreCommentary').textContent = commentary[Math.floor(Math.random()*commentary.length)];
+    document.getElementById('scoreBox').classList.add('show');
+  }
+
+  /* ---------- Squad Bucket List ---------- */
+  const bucketItems = [
+    "Late-night Maggi + FIFA tournament",
+    "Actually plan the trip we keep postponing",
+    "Roast session — Friday, no mercy",
+    "2am philosophy debate about literally anything",
+    "Marathon a show nobody agrees on",
+    "Group project where everyone actually contributes (mythical)",
+    "Football match watch party, snacks mandatory",
+    "Beat last semester's boring-lab survival record"
+  ];
+  const bucketList = document.getElementById('bucketList');
+  bucketItems.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="chk"></span><span class="label">${item}</span>`;
+    li.onclick = () => {
+      li.classList.toggle('done');
+      li.querySelector('.chk').textContent = li.classList.contains('done') ? '✓' : '';
+    };
+    bucketList.appendChild(li);
+  });
+
   /* ---------- Code snippet rotator ---------- */
   const snippets = [
     { file:'tip-of-the-day.js', code:`<span class="tk-cm">// today's tip</span>\n<span class="tk-kw">const</span> bug = <span class="tk-fn">find</span>(<span class="tk-str">'the one you swore wasn\\'t yours'</span>);\nbug.<span class="tk-fn">fix</span>(); <span class="tk-cm">// works on my machine ✅</span>` },
@@ -359,7 +600,10 @@
     { text:'“It’s not a bug, it’s an undocumented feature.”', who:'— unknown, probably you' },
     { text:'Add a button that does nothing except say "nice click" — morale matters.', who:'— UX brainstorm' },
     { text:'“Weeks of coding can save you hours of planning.”', who:'— cautionary tale' },
-    { text:'A dark mode so dark it needs its own dark mode.', who:'— design meeting, 11pm' }
+    { text:'A dark mode so dark it needs its own dark mode.', who:'— design meeting, 11pm' },
+    { text:'A group chat feature that auto-replies "Kya? Ye kiya bak rhe ho" to any bad excuse.', who:'— genuinely needed' },
+    { text:'What if attendance was based on vibes instead of actually showing up to lab?', who:'— circulated, not approved' },
+    { text:'A trophy for "Most Confidently Wrong Football Take" — updated weekly, contested nightly.', who:'— group awards ceremony' }
   ];
   let ideaIdx = 0;
   function renderIdea(){
@@ -368,13 +612,17 @@
   }
   function nextIdea(){ ideaIdx = (ideaIdx+1) % ideas.length; renderIdea(); }
   renderIdea();
+  nextLab();
 
   /* ---------- Live ticker feed ---------- */
   const feed = [
     '✅ build passed on first try (suspicious)', '☕ coffee level: critical', '🚀 deployed to prod at 4:58pm on a Friday',
     '🐛 bug found, immediately renamed "feature"', '📦 node_modules now visible from space',
     '🔧 fixed it by turning it off and on again', '💬 "it works on my machine" — confirmed team motto',
-    '⚡ page load time: instant-ish', '🌙 last commit: 2:47am, no regrets'
+    '⚡ page load time: instant-ish', '🌙 last commit: 2:47am, no regrets',
+    '⚽ group chat still arguing about that penalty from 3 hours ago', '🧪 lab ends in "5 more minutes" — 40 minutes ago',
+    '😂 "Kya? Ye kiya bak rhe ho" sent for the 4th time today', '🍜 maggi count tonight: concerning',
+    '📴 someone left the call and blamed WiFi, again', '🎲 Ludo dice declared unofficially cursed'
   ];
   const track = document.getElementById('tickerTrack');
   track.innerHTML = feed.concat(feed).map(f => `<span>${f}</span>`).join('');
